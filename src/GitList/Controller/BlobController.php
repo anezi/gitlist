@@ -56,13 +56,12 @@ class BlobController implements ControllerProviderInterface
             $blob = $repository->getBlob("$branch:\"$file\"")->output();
 
             $headers = array();
-            if ($app['util.repository']->isBinary($file)) {
+            if (isset($_GET['download']) || $app['util.repository']->isBinary($file)) {
                 $headers['Content-Disposition'] = 'attachment; filename="' .  $file . '"';
                 $headers['Content-Type'] = 'application/octet-stream';
             } else {
                 $headers['Content-Type'] = 'text/plain';
             }
-
             return new Response($blob, 200, $headers);
         })->assert('repo', $app['util.routing']->getRepositoryRegex())
           ->assert('commitishPath', $app['util.routing']->getCommitishPathRegex())
